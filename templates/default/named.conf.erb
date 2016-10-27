@@ -14,10 +14,6 @@ server <%= server_ip %> {
 <% } -%>
 <% end -%>
 
-<% each_resource_with_property('named_zone', @zones, :view, nil) do |zone| %>
-<%= render 'zone_clause.erb', variables: {zone: zone, node: node} %>
-<% end %>
-
 <% each_resource('named_view', @views) do |view| %>
 
 view "<%= view.name %>" {
@@ -38,7 +34,7 @@ view "<%= view.name %>" {
 <%   end %>
 <%#%>
 <% if view.recursion %>
-  recursion on;
+  recursion yes;
 <% end %>
 <%#%>
 <%   each_resource_with_property('named_zone', @zones, :view, view.name) do |zone| %>
@@ -48,11 +44,15 @@ view "<%= view.name %>" {
 <%   view.options.each do |opt| %>
   <%= opt %>;
 <%   end %>
+
+<%   node['named']['included_in_views_files'].each do |file| -%>
+  include "<%= "#{node['named']['sysconfdir']}/#{file}" %>";
+<%   end -%>
+
+  zone "." IN {
+    type hint;
+    file "named.ca";
+  };
 };
 
 <% end %>
-
-zone "." IN {
-  type hint;
-  file "named.ca";
-};

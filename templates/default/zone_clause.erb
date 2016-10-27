@@ -1,6 +1,6 @@
 zone "<%= @zone.name %>" {
     type <%= @zone.type %>;
-    file <%= "#{@node['named']['vardir']}/#{@zone.name}.db" %>;
+    file "<%= "#{@node['named']['vardir']}/#{@zone.name}.db" %>";
 
     <% @zone.options.each do |line| %>
     <%= line %>;

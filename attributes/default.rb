@@ -40,7 +40,8 @@ default['named']['views'] = []
 
 
 # Files which should be included in named.conf
-default['named']['included_files'] = %w(named.rfc1912.zones named.options)
+default['named']['included_files'] = %w(named.options)
+default['named']['included_in_views_files'] = %w(named.rfc1912.zones)
 
 # These are var files referenced by our rfc1912 zone and root hints (named.ca) zone
 default['named']['var_cookbook_files'] = %w(named.empty named.ca named.loopback named.localhost)

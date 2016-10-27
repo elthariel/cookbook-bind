@@ -50,7 +50,7 @@ action :create do
 
   template zone_path do
     source zone_path_no_serial
-    cookbook 'named'
+    local true
     variables serial: generate_zone_serial
     notifies :reload, "service[bind]"
     action :nothing
