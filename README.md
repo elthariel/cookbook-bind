@@ -1,4 +1,4 @@
-# Bind [![Build Status](https://secure.travis-ci.org/atomic-penguin/cookbook-bind.png?branch=master)](http://travis-ci.org/atomic-penguin/cookbook-bind)
+# Named [![Build Status](https://secure.travis-ci.org/elthariel/cookbook-named.png?branch=master)](http://travis-ci.org/elthariel/cookbook-named)
 
 ## Description
 
