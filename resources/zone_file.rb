@@ -25,9 +25,6 @@ property :time_ttl, Numeric, default: 172800
 
 property :records, Array
 
-actions :create
-default_action :create
-
 def initialize(resource_name, run_context)
   super
   node.default['named']['zone_files'] << resource_name
@@ -39,6 +36,7 @@ load_current_value do
   end
 end
 
+default_action :create
 action :create do
   zone_path_no_serial = "#{node['named']['vardir']}/.chef/#{name}.db.erb"
   zone_path = "#{node['named']['vardir']}/#{name}.db"
@@ -64,6 +62,6 @@ action :create do
     helpers Named::ZoneHelpers
     variables res: resource
     action :create
-    notifies :create, resources(template: zone_path), :immediately
+    notifies :create, "template[#{zone_path}]", :immediately
   end
 end

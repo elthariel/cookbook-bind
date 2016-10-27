@@ -7,7 +7,7 @@ RSpec::Core::RakeTask.new(:chefspec)
 # foodcritic rake task
 desc 'Foodcritic linter'
 task :foodcritic do
-  sh 'foodcritic -f correctness .'
+  sh 'foodcritic -f correctness -X spec . '
 end
 
 # rubocop rake task

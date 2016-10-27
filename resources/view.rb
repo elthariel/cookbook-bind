@@ -13,5 +13,6 @@ def initialize(resource_name, run_context)
   node.default['named']['views'] << resource_name
 end
 
+default_action :create
 action :create do
 end
