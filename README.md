@@ -2,14 +2,12 @@
 
 ## Description
 
-A cookbook to manage bind DNS servers, and zones.
+A cookbook to install and configure DNS BIND server as well as
+generate zone files with a fancy DSL.
 
 ## Requirements
 
-Included ldap2zone recipe depends on Chef 0.10.10 features,
-such as `chef_gem`.
-
-The net-ldap v0.2.2 Ruby gem is required for the ldap2zone recipe.
+This gem has been developped with chef 12.9
 
 ## Attributes
 
@@ -38,14 +36,6 @@ The net-ldap v0.2.2 Ruby gem is required for the ldap2zone recipe.
     and `bind['zones']['databag']` will be combined with zone names set
     via role attributes before the named.conf template is rendered.
 
-* `bind['zones']['ldap']`
-  - An array attribute where zone names may be set from an
-    ldap source.
-
-* `bind['zones']['databag']`
-  - An array attribute where zone names may be set from a
-    databag source.
-
 * `bind['forwardzones']`
   - An array of zones to forward requests for.
 
@@ -57,19 +47,9 @@ The net-ldap v0.2.2 Ruby gem is required for the ldap2zone recipe.
     the  named.conf template.
   - Defaults to slave
 
-* `bind['zonesource']`
-  - The external zone data source, included examples are databag
-    or ldap
-  - Defaults to databag.  Should have no effect if no zone names
-    exist in the bind `data_bag`.
-
 * `bind['options']`
   - Free form options for named.conf template
   - Defaults to an empty array.
-
-* `bind['allow_solo_search']`
-  - Boolean true/false, enabling chef-solo search
-  - Defaults to false
 
 * `bind['enable_log']`
   - Boolean, toggle bind query logging.  Note this applies only to a dedicated log, such as a query log.
@@ -136,57 +116,12 @@ The net-ldap v0.2.2 Ruby gem is required for the ldap2zone recipe.
 * `bind['rndc-key']`
   - Location which rndc.key gets created by rndc-confgen
 
-### ldap2zone recipe specific attributes
-
-We store our zone names on Active Directory, and use Ruby to pull
-these into Chef and configure our Linux BIND servers.  If you already
-have Active Directory, chances are you have an authoritative data
-source for zone names in LDAP and can use this recipe to query
-this data, just by setting a few attributes in a role.
-
-* `bind['ldap']['binddn']`
-   - The binddn username for connecting to LDAP
-   - Default nil
-
-* `bind['ldap']['bindpw']`
-  - The binddn password for connecting to LDAP
-  - Default nil
-
-* `bind['ldap']['filter']`
-  - The LDAP object filter for zone names
-  - Defaults to dnsZone class, excluding Root DNS Servers
-
-* `bind['ldap'][server']`
-  - The authoritative directory server for your domain
-  - Defaults to nil
-
-* `bind['ldap']['domainzones']`
-  - The LDAP tree where your domain zones are located
-  - Defaults to the Active Directory zone tree for example.com.
-
 ## Usage
-
-### Notes on the zonesource recipes
-
-The databag2zone and ldap2zone is optional code to fetch DNS zones
-from a data bag, or Active Directory integrated domain controllers.
-If you have a proper IP address management (IPAM) solution, you
-could drop in your own code to query an API on your IPAM server.
-
-Any query should use the `<<` operator to push results on to the
-`bind['zones']` array.  Drop your query code in a recipe
-named `query2zone.rb`, for example.  Then include the API query
-by overriding the attribute `bind['zonesource']` set to the
-string `query`.
-
-Alternatively, you can just use an `override['bind']['zones']` in
-a role or environment instead.  Or even a mix of both override
-attributes, and an API query to populate zones.
 
 ### Example role for internal recursing DNS
 
 An example wrapper cookbook for an internal split-horizon BIND server for
-example.com, might look like so: 
+example.com, might look like so:
 
 ```ruby
 # Configure and install Bind to function as an internal DNS server."
@@ -235,7 +170,7 @@ default['bind']['acl-role'] = 'external-acl'
 default['bind']['masters'] = %w(192.0.2.5 192.0.2.6)
 default['bind']['ipv6_listen'] = true
 default['bind']['zonetype'] = 'master'
-default['bind']['zones']['attribute'] = %w(example.com example.org) 
+default['bind']['zones']['attribute'] = %w(example.com example.org)
 default['bind']['options'] = [
   'recursion no;',
   'allow-query { any; };',
@@ -320,7 +255,7 @@ default['bind']['server'] = {
 
 ## License and Author
 
-Copyright: 2011 Eric G. Wolfe
+Copyright: 2011 Eric G. Wolfe, 2016 Julien 'Lta' BALLET
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
