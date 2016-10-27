@@ -20,4 +20,3 @@ bin/*
 sloccount.sc
 checkstyle.xml
 .coverage
-VERSION
