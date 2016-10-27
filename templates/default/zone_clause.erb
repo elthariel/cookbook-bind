@@ -1,4 +1,4 @@
-zone "<%= @zone.name %>" {
+zone "<%= @zone.domain %>" {
     type <%= @zone.type %>;
     file "<%= "#{@node['named']['vardir']}/#{@zone.name}.db" %>";
 

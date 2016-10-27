@@ -30,11 +30,11 @@ def initialize(resource_name, run_context)
   node.default['named']['zone_files'] << resource_name
 end
 
-load_current_value do
-  if ::File.exist?("#{node['named']['vardir']}/#{name}.db")
-    content IO.read("#{node['named']['vardir']}/#{name}.db")
-  end
-end
+# load_current_value do
+#   if ::File.exist?("#{node['named']['vardir']}/#{name}.db")
+#     content IO.read("#{node['named']['vardir']}/#{name}.db")
+#   end
+# end
 
 default_action :create
 action :create do

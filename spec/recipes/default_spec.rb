@@ -34,13 +34,8 @@ describe 'named::default' do
       expect(chef_run).to render_file('/etc/bind/named.options')
     end
 
-    it 'renders file /etc/bind/named.rfc1912.zones' do
-      expect(chef_run).to create_cookbook_file('/etc/bind/named.rfc1912.zones')
-    end
-
     it 'renders file /etc/bind/named.conf with included files' do
       expect(chef_run).to render_file('/etc/bind/named.conf').with_content(%r{include "/etc/bind/named.options"})
-      expect(chef_run).to render_file('/etc/bind/named.conf').with_content(%r{include "/etc/bind/named.rfc1912.zones"})
     end
 
     %w(named.empty named.loopback named.localhost named.ca).each do |var_file|

@@ -1,9 +1,8 @@
 include_recipe 'named'
 
 named_zone_file 'test.fr' do
-  primary_ns 'ns.test.fr'
-  hostmaster 'contact.lta.io'
-  serial '1234'
+  primary_ns 'ns.test.fr.'
+  hostmaster 'contact.lta.io.'
   records [
     { data: '1.1.1.1' },
     { name: 'ns', type: 'NS', data: '1.1.1.2' },

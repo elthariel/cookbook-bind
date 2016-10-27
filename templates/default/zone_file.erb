@@ -5,9 +5,9 @@
 $TTL <%= @res.ttl %>
 <% end %>
 <% if @res.origin.is_a? String %>
-$ORIGIN <%= @res.origin %>
+$ORIGIN <%= @res.origin %>.
 <% else %>
-$ORIGIN <%= @res.name %>
+$ORIGIN <%= @res.name %>.
 <% end %>
 
 @       IN      SOA     <%= @res.primary_ns %>  <%= @res.hostmaster %> (

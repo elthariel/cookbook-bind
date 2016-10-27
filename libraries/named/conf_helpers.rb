@@ -14,8 +14,13 @@ module Named
 
     def each_resource_with_property(type, names, prop, value)
       each_resource type, names do |r|
-        if block_given? && r.send(prop.to_sym) == value
-          yield r
+        if block_given?
+          res_value = r.send(prop.to_sym)
+          if res_value.is_a?(Array) && res_value.include?(value)
+            yield r
+          elsif res_value == value
+            yield r
+          end
         end
       end
     end

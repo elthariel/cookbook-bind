@@ -3,6 +3,7 @@
 #
 
 property :name, String, name_property: true
+property :domain, String
 property :type, String, default: 'master'
 property :file, [NilClass, String], default: nil
 property :view, [NilClass, String], default: nil
