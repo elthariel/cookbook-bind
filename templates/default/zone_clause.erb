@@ -2,7 +2,22 @@ zone "<%= @zone.domain %>" {
     type <%= @zone.type %>;
     file "<%= "#{@node['named']['vardir']}/#{@zone.name}.db" %>";
 
-    <% @zone.options.each do |line| %>
+    allow-update {
+<%  @zone.allow_update.each do |line| %>
     <%= line %>;
-    <% end %>
+<%  end %>
+    };
+    allow-transfer {
+<%  @zone.allow_transfer.each do |line| %>
+    <%= line %>;
+<%  end %>
+    };
+
+<%  if @zone.notify %>
+    notify yes;
+<%  end %>
+
+<%  @zone.options.each do |line| %>
+    <%= line %>;
+<%  end %>
 };
