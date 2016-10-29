@@ -78,10 +78,6 @@ default['named']['acls'] = []
 # to be included in the template.
 default['named']['options'] = []
 
-# Set an override at the role, or environment level for the named.zones array.
-# named.zonetype is used in the named.conf file for configured zones.
-default['named']['zonetype'] = 'slave'
-
 # This attribute enable logging
 default['named']['enable_log'] = false
 default['named']['log_file_versions'] = 2

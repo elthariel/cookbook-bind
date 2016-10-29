@@ -11,7 +11,7 @@ $ORIGIN test.fr.
                         172800
 )
 
-@                                IN     A       1.1.1.1
-ns                               IN    NS       1.1.1.2
-mx                               IN    MX    10 1.1.1.3
-cname                            IN CNAME       test.fr.
+@                                IN      A       1.1.1.1
+ns                               IN     NS       1.1.1.2
+mx                               IN     MX    10 1.1.1.3
+cname                            IN  CNAME       test.fr.

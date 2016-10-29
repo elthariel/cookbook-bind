@@ -9,10 +9,6 @@ property :primary_ns, String
 property :hostmaster, String
 property :serial, [NilClass, String], default: nil
 
-# named.conf options
-property :type, String, default: 'master'
-#property :forwarders, String, default: ''
-
 # File level options
 property :ttl, [Numeric, NilClass], default: nil
 property :origin, [TrueClass, FalseClass, String], default: true
