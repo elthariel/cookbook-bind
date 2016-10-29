@@ -3,11 +3,20 @@
 ## Description
 
 A cookbook to install and configure DNS BIND server as well as
-generate zone files with a fancy DSL.
+generate zone files with a fancy DSL. While allowing other setups,
+this cookbook emphasis in on managing a split-horizon authoritative
+server.
+
+This cookbook has been forked from the 'bind' community cookbook. 
+Some features like databag/ldap acl/zone configuration support have 
+been removed in favor of a DSL based approach using resources.
+
+To get started quickly, see the example in the [Usage](#usage) section.
 
 ## Requirements
 
-This gem has been developped with chef 12.9
+- Chef 12+ (developped on 12.9)
+- Debian/Ubuntu (Support for other platform is likely to be very easy to add and is very welcome)
 
 ## Attributes
 
@@ -20,32 +29,6 @@ This gem has been developped with chef 12.9
 * `bind['ipv6_listen']`
   - Boolean, whether BIND should listen on ipv6
   - Default is false
-
-* `bind['acl-role']`
-  - Search key for pulling split-domain ACLs out of `data_bags`
-  - Defaults to internal-acl, and has no effect if you do not need ACLs.
-
-* `bind['acl']`
-  - An array node attribute which `data_bag` ACLs are pushed on to,
-    and then passed to named.options template.
-  - Default is an empty array.
-
-* `bind['zones']['attribute']`
-  - An array attribute where zone names may be set from role
-    attributes.  The dynamic source attributes `bind['zones']['ldap']`
-    and `bind['zones']['databag']` will be combined with zone names set
-    via role attributes before the named.conf template is rendered.
-
-* `bind['forwardzones']`
-  - An array of zones to forward requests for.
-
-* `bind['forwarders']`
-  - An array of forwarders to use with the forwardzones.
-
-* `bind['zonetype']`
-  - The zone type, master, or slave for configuring
-    the  named.conf template.
-  - Defaults to slave
 
 * `bind['options']`
   - Free form options for named.conf template
@@ -61,15 +44,15 @@ This gem has been developped with chef 12.9
     configuration.
   - Default to `/var/log/bind9/query.log`
 
-* `bind['statistics-channel']
+* `bind['statistics-channel']`
   - Boolean to enable a statistics-channel on a TCP port.
   - Default, platform-specific
 
-* `bind['statistics-port']
+* `bind['statistics-port']`
   - Integer for statistics-channel TCP port.
   - Default, 8080
 
-* `bind['server']
+* `bind['server']`
   - Hash of server IPs, each with their own array of options for the "server" clause.
   - Will not populate by default
 
@@ -116,142 +99,38 @@ This gem has been developped with chef 12.9
 * `bind['rndc-key']`
   - Location which rndc.key gets created by rndc-confgen
 
+## Resources
+
+Everything zone related in the `named` cookbook is configured using resources.
+
+> All the resources except the `named_zone_file` are *fake* resources, used to gather data for the `named.conf` and `named.options` file, don't use them for notify/subscribes
+
+### named_zone_file
+
+This resource represents a zone file for authoritative DNS. Use it to generate zone from databags or code.
+
+#### Properties
+
+- `name`: The name property of this resource. It is used to generate the file name of the zone file "#{name}.db". If the `origin` property isn't set, the `name` property is used as the origin for the zone.
+
+- `primary_ns`: [required] The primary name server is the SOA field
+
+- `hostmaster`: [required] The hostmaster field of the SOA.
+
+- `serial`: [default = nil] The serial number for the zone. A serial will be generated automatically if you don't provide it. 
+
+- `ttl`: [default = nil] The value of the default ttl (`$TTL`) for the zone file. 
+
+
+### named_acl
+
+### named_view
+
+### named_zone
+
 ## Usage
 
-### Example role for internal recursing DNS
 
-An example wrapper cookbook for an internal split-horizon BIND server for
-example.com, might look like so:
-
-```ruby
-# Configure and install Bind to function as an internal DNS server."
-# attributes/default.rb
-include_attribute 'bind'
-default['bind']['acl-role'] = 'internal-acl'
-default['bind']['masters'] = %w(192.0.2.10 192.0.2.11 192.0.2.12)
-default['bind']['ipv6_listen'] = true
-default['bind']['zonetype'] = 'slave'
-default['bind']['zonesource'] = 'ldap'
-default['bind']['zones']['attribute'] = %w(example.com example.org)
-default['bind']['ldap'] = {
-  server: 'example.com',
-  binddn: 'cn=chef-ldap,ou=Service Accounts,dc=example,dc=com',
-  bindpw: 'ServiceAccountPassword',
-  domainzones: 'cn=MicrosoftDNS,dc=DomainDnsZones,dc=example,dc=com'
-}
-default['bind']['options'] = [
-  'check-names slave ignore;',
-  'multi-master yes;',
-  'provide-ixfr yes;',
-  'recursive-clients 10000;',
-  'request-ixfr yes;',
-  'allow-notify { acl-dns-masters; acl-dns-slaves; };',
-  'allow-query { example-lan; localhost; };',
-  'allow-query-cache { example-lan; localhost; };',
-  'allow-recursion { example-lan; localhost; };',
-  'allow-transfer { acl-dns-masters; acl-dns-slaves; };',
-  'allow-update-forwarding { any; };',
-]
-
-# recipes/default.rb
-include_recipe 'bind'
-```
-
-### Example role for authoritative only external DNS
-
-An example wrapper cookbook for an external split-horizon authoritative only
-BIND server for example.com, might look like so:
-
-```ruby
-# Configure and install Bind to function as an external DNS server."
-# attributes/default.rb
-include_attribute 'bind'
-default['bind']['acl-role'] = 'external-acl'
-default['bind']['masters'] = %w(192.0.2.5 192.0.2.6)
-default['bind']['ipv6_listen'] = true
-default['bind']['zonetype'] = 'master'
-default['bind']['zones']['attribute'] = %w(example.com example.org)
-default['bind']['options'] = [
-  'recursion no;',
-  'allow-query { any; };',
-  'allow-transfer { external-private-interfaces; external-dns; };',
-  'allow-notify { external-private-interfaces; external-dns; localhost; };',
-  'listen-on-v6 { any; };'
-]
-
-# recipes/default.rb
-include_recipe 'bind'
-```
-
-### Example BIND Access Controls from data bag
-
-In order to include an external ACL for the private interfaces
-of your external nameservers, you can create a data bag like so.
-
-  * data_bag name: bind
-    - id: ACL entry name
-    - role: search key for bind data_bag
-    - hosts: array of CIDR addresses, or IP addresses
-
-```json
-{
-  "id": "external-private-interfaces",
-  "role": "external-acl",
-  "hosts": [ "192.0.2.15", "192.0.2.16", "192.0.2.17" ]
-}
-```
-
-In order to include an internal ACL for the query addresses of
-your LAN, you might create a data bag like so.
-
-  * data_bag name: bind
-    - id: ACL entry name
-    - role: search key for bind data_bag
-    - hosts: array of CIDR addresses, or IP addresses
-
-```json
-{
-  "id": "example-lan",
-  "role": "internal-acl",
-  "hosts": [ "192.0.2.18", "192.0.2.19", "192.0.2.20" ]
-}
-```
-
-### Example to load zone names from data bag
-
-If you have a few number of zones, you can split these
-up into individual data bag objects if you prefer.
-
-  * data_bag name: bind
-    - zone: string representation of individual zone name.
-
-```json
-{
-  "id": "example",
-  "zone": "example.com"
-}
-```
-
-If you wish to group a number of zones together, you can
-use the following format to include a number of zones at once.
-
-  * data_bag name: bind
-    - zones: array representation of several zone names.
-
-```json
-{
-  "id": "example",
-  "zones": [ "example.com", "example.org" ]
-}
-```
-
-### Example of using the 'server' clause
-```ruby
-default['bind']['server'] = {
-  10.0.0.1: ['keys { my_tsig_key; };', 'bogus no;'],
-  10.0.0.2: ['bogus yes;']
-}
-```
 
 ## License and Author
 
