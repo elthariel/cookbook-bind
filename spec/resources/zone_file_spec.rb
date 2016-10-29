@@ -4,7 +4,8 @@ describe 'named_zone_file' do
   let :chef_run do
     ChefSpec::SoloRunner.new(step_into: ['named_zone_file'],
                              platform: 'ubuntu',
-                             version: '16.04').converge('example::simple_zone')
+                             version: '16.04')
+      .converge('example::simple_zone_file')
   end
 
   let(:tpl_path) { '/var/cache/bind/.chef/test.fr.db.erb' }

@@ -17,10 +17,12 @@ end
 
 named_zone 'internal' do
   view 'internal-view'
+  domain 'domain'
 end
 
 named_zone 'external' do
   view 'external-view'
+  domain 'domain'
 end
 
 named_view 'internal-view' do

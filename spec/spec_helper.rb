@@ -14,6 +14,8 @@ RSpec.configure do |config|
     File.join(ROOT_PATH, '..'),
     File.join(SPEC_PATH, 'fixtures', 'cookbooks')
   ]
+
+  config.alias_example_to :they
 end
 
 at_exit { ChefSpec::Coverage.report! }
