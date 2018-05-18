@@ -2,11 +2,18 @@ zone "<%= @zone.domain %>" {
     type <%= @zone.type %>;
     file "<%= "#{@node['named']['vardir']}/#{@zone.name}.db" %>";
 
+<% if @zone.type == 'slave' %>
+    <% unless @zone.masters.empty? %>
+    masters {<%= @zone.masters.join("; ") %>;};
+    <% end %>
+<% end %>
+<% if @zone.type == 'master' %>
     allow-update {
 <%  @zone.allow_update.each do |line| %>
     <%= line %>;
 <%  end %>
     };
+<% end  %>
     allow-transfer {
 <%  @zone.allow_transfer.each do |line| %>
     <%= line %>;

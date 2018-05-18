@@ -9,6 +9,7 @@ property :file, [NilClass, String], default: nil
 property :view, [String, Array], default: []
 property :allow_transfer, [Array], default: ['none']
 property :allow_update, [Array], default: ['none']
+property :masters, [Array], default: []
 property :options, Array, default: []
 property :notify, [TrueClass, FalseClass], default: false
 

@@ -5,6 +5,7 @@ gem 'chefspec', '~> 5.2'
 gem 'foodcritic', '~> 8.1'
 gem 'rubocop'
 gem 'thor-scmversion'
+gem 'chef-sugar'
 
 group :integration do
   gem 'test-kitchen'

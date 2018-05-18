@@ -4,8 +4,8 @@ license 'Apache 2.0'
 description 'Installs/Configures ISC BIND, generate zonefiles'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version IO.read(File.join(File.dirname(__FILE__), 'VERSION'))
-source_url 'https://github.com/elthariel'
-issues_url 'https://github.com/elthariel/issues'
+source_url 'https://github.com/elthariel/cookbook-named'
+issues_url 'https://github.com/elthariel/cookbook-named/issues'
 name 'named'
 
 depends 'chef-sugar'

@@ -75,6 +75,7 @@ GEM
       fuzzyurl
       mixlib-config (~> 2.0)
       mixlib-shellout (~> 2.0)
+    chef-sugar (4.0.0)
     chef-zero (5.1.0)
       ffi-yajl (~> 2.2)
       hashie (>= 2.0, < 4.0)
@@ -263,13 +264,14 @@ GEM
       buff-extensions (~> 1.0)
       hashie (>= 2.0.2, < 4.0.0)
     wmi-lite (1.0.0)
-    yajl-ruby (1.2.1)
+    yajl-ruby (1.4.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   berkshelf (~> 4.0)
+  chef-sugar
   chefspec (~> 5.2)
   foodcritic (~> 8.1)
   kitchen-vagrant
@@ -278,4 +280,4 @@ DEPENDENCIES
   thor-scmversion
 
 BUNDLED WITH
-   1.13.2
+   1.16.0
