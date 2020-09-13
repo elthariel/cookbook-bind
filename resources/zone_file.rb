@@ -4,7 +4,7 @@
 include Named::Helpers
 
 # The main zone info, used to generate SOA
-property :name, String, name_property: true
+property :domain, String, name_property: true
 property :primary_ns, String
 property :hostmaster, String
 property :serial, [NilClass, String], default: nil
@@ -26,17 +26,11 @@ def initialize(resource_name, run_context)
   node.default['named']['zone_files'] << resource_name
 end
 
-# load_current_value do
-#   if ::File.exist?("#{node['named']['vardir']}/#{name}.db")
-#     content IO.read("#{node['named']['vardir']}/#{name}.db")
-#   end
-# end
-
 default_action :create
 action :create do
-  zone_path_no_serial = "#{node['named']['vardir']}/.chef/#{name}.db.erb"
-  zone_path = "#{node['named']['vardir']}/#{name}.db"
-  resource = self
+  zone_path_no_serial =
+    "#{node['named']['vardir']}/.chef/#{new_resource.domain}.db.erb"
+  zone_path = "#{node['named']['vardir']}/#{new_resource.domain}.db"
 
   directory ("#{node['named']['vardir']}/.chef") do
     owner node['named']['user']
@@ -56,7 +50,7 @@ action :create do
     source 'zone_file.erb'
     cookbook 'named'
     helpers Named::ZoneHelpers
-    variables res: resource
+    variables res: new_resource
     action :create
     notifies :create, "template[#{zone_path}]", :immediately
   end

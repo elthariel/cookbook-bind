@@ -20,8 +20,14 @@ zone "<%= @zone.domain %>" {
 <%  end %>
     };
 
-<%  if @zone.notify %>
+<%  if @zone.notify.is_a?(String) %>
+    notify <%= @zone.notify %>;
+<%  elsif @zone.notify.is_a?(TrueClass) %>
     notify yes;
+<%  end %>
+
+<%  if @zone.also_notify %>
+    also-notify { <%= @zone.also_notify.join('; ') + '; ' %>};
 <%  end %>
 
 <%  @zone.options.each do |line| %>

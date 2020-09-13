@@ -11,7 +11,8 @@ property :allow_transfer, [Array], default: ['none']
 property :allow_update, [Array], default: ['none']
 property :masters, [Array], default: []
 property :options, Array, default: []
-property :notify, [TrueClass, FalseClass], default: false
+property :notify, [TrueClass, FalseClass, String], default: false
+property :also_notify, [NilClass, Array], default: nil
 
 def initialize(resource_name, run_context)
   super
